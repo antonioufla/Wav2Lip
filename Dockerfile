@@ -32,9 +32,18 @@ RUN pip install --upgrade pip && \
     imageio==2.19.3 \
     imageio-ffmpeg
 
-# Baixar pesos do modelo Wav2Lip (wav2lip_gan.pth)
+# Baixar pesos do modelo Wav2Lip
 RUN mkdir -p checkpoints && \
-    python -c "import requests; url='https://huggingface.co/Rudrabha/Wav2Lip/resolve/main/checkpoints/wav2lip_gan.pth'; r=requests.get(url, timeout=120); open('checkpoints/wav2lip_gan.pth','wb').write(r.content) if r.status_code==200 else exit(1)" && \
+    wget -q --show-progress \
+        "https://huggingface.co/Rudrabha/Wav2Lip/resolve/main/checkpoints/wav2lip_gan.pth" \
+        -O checkpoints/wav2lip_gan.pth && \
     ls -lh checkpoints/
+
+# Baixar modelo de detecção de face (s3fd) necessário em runtime
+RUN mkdir -p face_detection/detection/sfd && \
+    wget -q --show-progress \
+        "https://www.adrianbulat.com/downloads/python-fan/s3fd-619a316812.pth" \
+        -O face_detection/detection/sfd/s3fd.pth && \
+    ls -lh face_detection/detection/sfd/
 
 CMD ["python", "-u", "handler.py"]
