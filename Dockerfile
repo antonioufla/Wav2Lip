@@ -32,21 +32,7 @@ RUN pip install --upgrade pip && \
     imageio==2.19.3 \
     imageio-ffmpeg
 
-# Baixar pesos do modelo Wav2Lip via huggingface_hub (wget falha com exit 6 nos redirects do HF)
-RUN mkdir -p checkpoints && \
-    python -c "\
-from huggingface_hub import hf_hub_download; \
-import shutil; \
-src = hf_hub_download(repo_id='Rudrabha/Wav2Lip', filename='checkpoints/wav2lip_gan.pth'); \
-shutil.copy(src, 'checkpoints/wav2lip_gan.pth'); \
-print('Downloaded wav2lip_gan.pth')" && \
-    ls -lh checkpoints/
-
-# Baixar modelo de detecção de face (s3fd) necessário em runtime
-RUN mkdir -p face_detection/detection/sfd && \
-    wget -q --show-progress --no-check-certificate \
-        "https://www.adrianbulat.com/downloads/python-fan/s3fd-619a316812.pth" \
-        -O face_detection/detection/sfd/s3fd.pth && \
-    ls -lh face_detection/detection/sfd/
+# Pesos baixados no cold start pelo handler.py (Rudrabha/Wav2Lip é repo gated no HuggingFace)
+# Defina HF_TOKEN nas variáveis de ambiente do endpoint no RunPod
 
 CMD ["python", "-u", "handler.py"]
