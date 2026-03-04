@@ -32,8 +32,9 @@ RUN pip install --upgrade pip && \
     imageio==2.19.3 \
     imageio-ffmpeg
 
-# Baixar pesos do modelo (usar python -m huggingface_hub para evitar falta do huggingface-cli)
+# Baixar pesos do modelo Wav2Lip (wav2lip_gan.pth)
 RUN mkdir -p checkpoints && \
-    python -c "from huggingface_hub import snapshot_download; snapshot_download(repo_id='Rudrabha/Wav2Lip', local_dir='checkpoints', allow_patterns='*.pth')"
+    python -c "import requests; url='https://huggingface.co/Rudrabha/Wav2Lip/resolve/main/checkpoints/wav2lip_gan.pth'; r=requests.get(url, timeout=120); open('checkpoints/wav2lip_gan.pth','wb').write(r.content) if r.status_code==200 else exit(1)" && \
+    ls -lh checkpoints/
 
 CMD ["python", "-u", "handler.py"]
