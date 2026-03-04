@@ -32,10 +32,8 @@ RUN pip install --upgrade pip && \
     imageio==2.19.3 \
     imageio-ffmpeg
 
-# Baixar pesos do modelo
+# Baixar pesos do modelo (usar python -m huggingface_hub para evitar falta do huggingface-cli)
 RUN mkdir -p checkpoints && \
-    huggingface-cli download Rudrabha/Wav2Lip \
-      --local-dir checkpoints \
-      --include "*.pth"
+    python -c "from huggingface_hub import snapshot_download; snapshot_download(repo_id='Rudrabha/Wav2Lip', local_dir='checkpoints', allow_patterns='*.pth')"
 
 CMD ["python", "-u", "handler.py"]
