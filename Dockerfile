@@ -34,14 +34,14 @@ RUN pip install --upgrade pip && \
 
 # Baixar pesos do modelo Wav2Lip
 RUN mkdir -p checkpoints && \
-    wget -q --show-progress \
+    wget -q --show-progress --no-check-certificate \
         "https://huggingface.co/Rudrabha/Wav2Lip/resolve/main/checkpoints/wav2lip_gan.pth" \
         -O checkpoints/wav2lip_gan.pth && \
     ls -lh checkpoints/
 
 # Baixar modelo de detecção de face (s3fd) necessário em runtime
 RUN mkdir -p face_detection/detection/sfd && \
-    wget -q --show-progress \
+    wget -q --show-progress --no-check-certificate \
         "https://www.adrianbulat.com/downloads/python-fan/s3fd-619a316812.pth" \
         -O face_detection/detection/sfd/s3fd.pth && \
     ls -lh face_detection/detection/sfd/
