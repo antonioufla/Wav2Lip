@@ -32,11 +32,14 @@ RUN pip install --upgrade pip && \
     imageio==2.19.3 \
     imageio-ffmpeg
 
-# Baixar pesos do modelo Wav2Lip
+# Baixar pesos do modelo Wav2Lip via huggingface_hub (wget falha com exit 6 nos redirects do HF)
 RUN mkdir -p checkpoints && \
-    wget -q --show-progress --no-check-certificate \
-        "https://huggingface.co/Rudrabha/Wav2Lip/resolve/main/checkpoints/wav2lip_gan.pth" \
-        -O checkpoints/wav2lip_gan.pth && \
+    python -c "\
+from huggingface_hub import hf_hub_download; \
+import shutil; \
+src = hf_hub_download(repo_id='Rudrabha/Wav2Lip', filename='checkpoints/wav2lip_gan.pth'); \
+shutil.copy(src, 'checkpoints/wav2lip_gan.pth'); \
+print('Downloaded wav2lip_gan.pth')" && \
     ls -lh checkpoints/
 
 # Baixar modelo de detecção de face (s3fd) necessário em runtime
