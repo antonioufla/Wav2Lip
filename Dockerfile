@@ -1,5 +1,5 @@
 # Wav2Lip - RunPod Serverless
-# Updated: 2026-03-04 12:12 - Fixed dependencies
+# Updated: 2026-03-04 22:00 - Force rebuild
 FROM pytorch/pytorch:2.1.0-cuda12.1-cudnn8-devel
 
 ENV DEBIAN_FRONTEND=noninteractive \
