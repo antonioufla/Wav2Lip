@@ -16,20 +16,18 @@ S3FD_PATH = WORKSPACE / "face_detection" / "detection" / "sfd" / "s3fd.pth"
 
 def download_weights():
     """Download model weights at cold start if not present."""
-    # Wav2Lip GAN checkpoint via HuggingFace (requires HF_TOKEN for gated repo)
+    # Wav2Lip GAN checkpoint via mirror público (sem autenticação)
     cp = Path(CHECKPOINT_PATH)
     if not cp.exists():
         cp.parent.mkdir(parents=True, exist_ok=True)
         print("[Wav2Lip] Baixando wav2lip_gan.pth...")
-        from huggingface_hub import hf_hub_download
-        token = os.environ.get("HF_TOKEN") or os.environ.get("HUGGING_FACE_HUB_TOKEN")
-        src = hf_hub_download(
-            repo_id="Rudrabha/Wav2Lip",
-            filename="checkpoints/wav2lip_gan.pth",
-            token=token,
-        )
-        import shutil
-        shutil.copy(src, str(cp))
+        url = "https://huggingface.co/justinjohn0306/Wav2Lip/resolve/main/checkpoints/wav2lip_gan.pth"
+        r = requests.get(url, timeout=300, stream=True)
+        r.raise_for_status()
+        with open(str(cp), "wb") as f:
+            for chunk in r.iter_content(chunk_size=1024 * 1024):
+                if chunk:
+                    f.write(chunk)
         print(f"[Wav2Lip] wav2lip_gan.pth salvo em {cp}")
     else:
         print(f"[Wav2Lip] checkpoint já existe: {cp}")
